@@ -21,11 +21,33 @@
 
 ## 系统
 ### lsof命令
-   lsof即 list open files，可以查看当前系统的打开的文件描述符，和该描述符所属的进程，或者进程所打开的文件描述符。
+   
+    1. 查看当前用户指定的网络连接相关的文件描述符信息
+    lsof -i [ip地址类型] [协议] [@ip] [:服务或者端口]
+    ip地址类型: 4代表ipv4、 6代表ipv6
+    协议: tcp、udp
+    ip: ip地址
+    服务或者端口: FTP、SSH、端口号
+    
+    
+    2. 查看当前用户网络连接相关的文件描述符信息
+    lsof -i 
+    
+    
+    3. 查看指定进程的文件描述符信息
+    lsof -p [PID]
+    PID: 进程id
+   
+   
+    4. 查看指定用户的文件描述符信息
+    lsof -u [USER]
+    USER: 用户名
+    
+例子:
     
     启动用例
     $ ./echo 
-    $ lsof -i  tcp:7737
+    $ lsof -i tcp:7737
     进程名字  进程ID   所属用户  文件描述符  文件类型   设备      文件大小    索引节点   文件名称
     COMMAND   PID     USER     FD         TYPE       DEVICE   SIZE/OFF    NODE      NAME
     echo      10506   dan      3u         IPv4       46129    0t0         TCP       *:7737 (LISTEN)
