@@ -1,6 +1,6 @@
 # Linux 好用的工具教程
 
-介绍一些好用的linux工具
+介绍一些好用的linux工具，教程所用的例程: https://github.com/DAN-AND-DNA/37net
 
 ## 内容
 
