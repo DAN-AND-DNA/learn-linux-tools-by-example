@@ -22,24 +22,26 @@
 查看指定进程的代码段、堆、栈、动态库、内核、虚拟内存空间地址，例如:
     
     $ cat /proc/16078/maps 
-    00400000-00403000 r-xp 00000000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
-    00602000-00603000 r--p 00002000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
-    00603000-00604000 rw-p 00003000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
-    02470000-024c1000 rw-p 00000000 00:00 0                                  [heap]
-    7f065caba000-7f065cc7c000 r-xp 00000000 08:03 74554                      /usr/lib64/libc-2.17.so
-    7f065cc7c000-7f065ce7c000 ---p 001c2000 08:03 74554                      /usr/lib64/libc-2.17.so
-    7f065ce7c000-7f065ce80000 r--p 001c2000 08:03 74554                      /usr/lib64/libc-2.17.so
-    7f065ce80000-7f065ce82000 rw-p 001c6000 08:03 74554                      /usr/lib64/libc-2.17.so
-    7f065ce82000-7f065ce87000 rw-p 00000000 00:00 0 
-    7f065ce87000-7f065cea9000 r-xp 00000000 08:03 74547                      /usr/lib64/ld-2.17.so
-    7f065d04e000-7f065d0a0000 rw-p 00000000 00:00 0 
-    7f065d0a6000-7f065d0a8000 rw-p 00000000 00:00 0 
-    7f065d0a8000-7f065d0a9000 r--p 00021000 08:03 74547                      /usr/lib64/ld-2.17.so
-    7f065d0a9000-7f065d0aa000 rw-p 00022000 08:03 74547                      /usr/lib64/ld-2.17.so
-    7f065d0aa000-7f065d0ab000 rw-p 00000000 00:00 0 
-    7ffe80a4d000-7ffe80a6e000 rw-p 00000000 00:00 0                          [stack]
-    7ffe80b7b000-7ffe80b7d000 r-xp 00000000 00:00 0                          [vdso]
-    ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+    
+    开始地址-结束地址        可读|可写|可执行 偏移量   设备号   文件号                      文件名
+    00400000-00403000                 r-xp 00000000 08:03 103040261                  /home/dan/work/37net/example/build/bin/echo
+    00602000-00603000                 r--p 00002000 08:03 103040261                  /home/dan/work/37net/example/build/bin/echo
+    00603000-00604000                 rw-p 00003000 08:03 103040261                  /home/dan/work/37net/example/build/bin/echo
+    02470000-024c1000                 rw-p 00000000 00:00 0                          [heap]
+    7f065caba000-7f065cc7c000         r-xp 00000000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065cc7c000-7f065ce7c000         ---p 001c2000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065ce7c000-7f065ce80000         r--p 001c2000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065ce80000-7f065ce82000         rw-p 001c6000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065ce82000-7f065ce87000         rw-p 00000000 00:00 0 
+    7f065ce87000-7f065cea9000         r-xp 00000000 08:03 74547                      /usr/lib64/ld-2.17.so
+    7f065d04e000-7f065d0a0000         rw-p 00000000 00:00 0 
+    7f065d0a6000-7f065d0a8000         rw-p 00000000 00:00 0 
+    7f065d0a8000-7f065d0a9000         r--p 00021000 08:03 74547                      /usr/lib64/ld-2.17.so
+    7f065d0a9000-7f065d0aa000         rw-p 00022000 08:03 74547                      /usr/lib64/ld-2.17.so
+    7f065d0aa000-7f065d0ab000         rw-p 00000000 00:00 0 
+    7ffe80a4d000-7ffe80a6e000         rw-p 00000000 00:00 0                          [stack]
+    7ffe80b7b000-7ffe80b7d000         r-xp 00000000 00:00 0                          [vdso]
+    ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                          [vsyscall]
 
 查看指定进程的总体内存信息，例如:
 
