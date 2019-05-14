@@ -25,7 +25,7 @@
     
     $ cat /proc/16078/maps 
     
-    开始地址-结束地址        可读|可写|可执行 偏移量   设备号   文件号                      文件名
+    开始地址-结束地址       可读|可写|可执行 文件偏移量 设备号 索引节点|文件号             路径|文件名
     00400000-00403000                 r-xp 00000000 08:03 103040261                  /home/dan/work/37net/example/build/bin/echo
     00602000-00603000                 r--p 00002000 08:03 103040261                  /home/dan/work/37net/example/build/bin/echo
     00603000-00604000                 rw-p 00003000 08:03 103040261                  /home/dan/work/37net/example/build/bin/echo
@@ -44,6 +44,10 @@
     7ffe80a4d000-7ffe80a6e000         rw-p 00000000 00:00 0                          [stack]
     7ffe80b7b000-7ffe80b7d000         r-xp 00000000 00:00 0                          [vdso]
     ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                          [vsyscall]
+
+    通过mmap创建的域的文件偏移量、设备号以及文件号不为0
+    其中没有路径或者文件名的是通过mmap创建的匿名域，没有绑定到文件上
+
 
 查看指定进程的总体内存信息，例如:
 
