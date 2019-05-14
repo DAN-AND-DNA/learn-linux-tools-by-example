@@ -5,7 +5,7 @@
 ## 内容
 
 - [进程](#进程)
-
+  - [proc](#proc)
 - [网络](#网络)
   - [ss](#ss)
   - [netstat](#netstat)
@@ -16,8 +16,185 @@
 
 
 ## 进程
+## proc
+可以通过该文件查看进程的
 
+查看指定进程的代码段虚拟、堆、栈、动态库、内核、虚拟内存空间地址，例如:
     
+    $ cat /proc/16078/maps 
+    00400000-00403000 r-xp 00000000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
+    00602000-00603000 r--p 00002000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
+    00603000-00604000 rw-p 00003000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
+    02470000-024c1000 rw-p 00000000 00:00 0                                  [heap]
+    7f065caba000-7f065cc7c000 r-xp 00000000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065cc7c000-7f065ce7c000 ---p 001c2000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065ce7c000-7f065ce80000 r--p 001c2000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065ce80000-7f065ce82000 rw-p 001c6000 08:03 74554                      /usr/lib64/libc-2.17.so
+    7f065ce82000-7f065ce87000 rw-p 00000000 00:00 0 
+    7f065ce87000-7f065cea9000 r-xp 00000000 08:03 74547                      /usr/lib64/ld-2.17.so
+    7f065d04e000-7f065d0a0000 rw-p 00000000 00:00 0 
+    7f065d0a6000-7f065d0a8000 rw-p 00000000 00:00 0 
+    7f065d0a8000-7f065d0a9000 r--p 00021000 08:03 74547                      /usr/lib64/ld-2.17.so
+    7f065d0a9000-7f065d0aa000 rw-p 00022000 08:03 74547                      /usr/lib64/ld-2.17.so
+    7f065d0aa000-7f065d0ab000 rw-p 00000000 00:00 0 
+    7ffe80a4d000-7ffe80a6e000 rw-p 00000000 00:00 0                          [stack]
+    7ffe80b7b000-7ffe80b7d000 r-xp 00000000 00:00 0                          [vdso]
+    ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+查看指定进程的总体内存信息，例如:
+
+    输出结果中
+        VmSize 代表占用虚拟内存的大小
+        VmRSS 代表实际使用的物理内存的大小
+        VmStk 代表使用的栈虚拟内存大小
+        VmData 代表数据段的虚拟内存大小
+        VmExe 代表代码段虚拟内存大小
+        VmLib 代表动态库的虚拟内存大小
+        Threads 代表已经使用的线程数
+        
+        
+    $ cat /proc/16078/status
+    Name:   echo
+    Umask:  0002
+    State:  S (sleeping)
+    Tgid:   16078
+    Ngid:   0
+    Pid:    16078
+    PPid:   14273
+    TracerPid:      0
+    Uid:    1000    1000    1000    1000
+    Gid:    1000    1000    1000    1000
+    FDSize: 256
+    Groups: 10 1000 
+    VmPeak:     4860 kB
+    VmSize:     4860 kB
+    VmLck:         0 kB
+    VmPin:         0 kB
+    VmHWM:       880 kB
+    VmRSS:       880 kB
+    RssAnon:             416 kB
+    RssFile:             464 kB
+    RssShmem:              0 kB
+    VmData:      692 kB
+    VmStk:       132 kB
+    VmExe:        12 kB
+    VmLib:      1936 kB
+    VmPTE:        32 kB
+    VmSwap:        0 kB
+    Threads:        1
+    SigQ:   0/31936
+    SigPnd: 0000000000000000
+    ShdPnd: 0000000000000000
+    SigBlk: 0000000000000000
+    SigIgn: 0000000000001000
+    SigCgt: 0000000000000002
+    CapInh: 0000000000000000
+    CapPrm: 0000000000000000
+    CapEff: 0000000000000000
+    CapBnd: 0000001fffffffff
+    CapAmb: 0000000000000000
+    Seccomp:        0
+    Speculation_Store_Bypass:       vulnerable
+    Cpus_allowed:   3f
+    Cpus_allowed_list:      0-5
+    Mems_allowed:                           00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001
+    Mems_allowed_list:      0
+    voluntary_ctxt_switches:        147116
+    nonvoluntary_ctxt_switches:     392
+    
+查看一个进程的代码段、堆、栈、动态库、内核所占用的内存信息，例如:
+   
+    输出结果中
+        Size 代表占用虚拟内存的大小
+        Rss 代表实际使用物理内存(包含共享库占用的内存)
+        Shared_Clean 代表未被修改的共享内存page大小，换页无需写入磁盘
+        Shared_Dirty 代表被修改了共享内存page大小，换页需写入磁盘
+        Private_Clean 代表未被修改的私有内存page大小，换页无需写入磁盘
+        Private_Dirty 代表被修改的私有内存page大小，换页需写入磁盘
+        
+    
+    $ cat /proc/16078/smaps
+    00400000-00403000 r-xp 00000000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
+    Size:                 12 kB
+    Rss:                   8 kB
+    Pss:                   8 kB
+    Shared_Clean:          0 kB
+    Shared_Dirty:          0 kB
+    Private_Clean:         8 kB
+    Private_Dirty:         0 kB
+    Referenced:            8 kB
+    Anonymous:             0 kB
+    AnonHugePages:         0 kB
+    Swap:                  0 kB
+    KernelPageSize:        4 kB
+    MMUPageSize:           4 kB
+    Locked:                0 kB
+    VmFlags: rd ex mr mp me dw sd 
+    00602000-00603000 r--p 00002000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
+    Size:                  4 kB
+    Rss:                   4 kB
+    Pss:                   4 kB
+    Shared_Clean:          0 kB
+    Shared_Dirty:          0 kB
+    Private_Clean:         0 kB
+    Private_Dirty:         4 kB
+    Referenced:            4 kB
+    Anonymous:             4 kB
+    AnonHugePages:         0 kB
+    Swap:                  0 kB
+    KernelPageSize:        4 kB
+    MMUPageSize:           4 kB
+    Locked:                0 kB
+    VmFlags: rd mr mp me dw ac sd 
+    00603000-00604000 rw-p 00003000 08:03 103040261                          /home/dan/work/37net/example/build/bin/echo
+    Size:                  4 kB
+    Rss:                   4 kB
+    Pss:                   4 kB
+    Shared_Clean:          0 kB
+    Shared_Dirty:          0 kB
+    Private_Clean:         0 kB
+    Private_Dirty:         4 kB
+    Referenced:            4 kB
+    Anonymous:             4 kB
+    AnonHugePages:         0 kB
+    Swap:                  0 kB
+    KernelPageSize:        4 kB
+    MMUPageSize:           4 kB
+    Locked:                0 kB
+    VmFlags: rd wr mr mp me dw ac sd 
+    02470000-024c1000 rw-p 00000000 00:00 0                                  [heap]
+    Size:                324 kB
+    Rss:                  12 kB
+    Pss:                  12 kB
+    Shared_Clean:          0 kB
+    Shared_Dirty:          0 kB
+    Private_Clean:         0 kB
+    Private_Dirty:        12 kB
+    Referenced:           12 kB
+    Anonymous:            12 kB
+    AnonHugePages:         0 kB
+    Swap:                  0 kB
+    KernelPageSize:        4 kB
+    MMUPageSize:           4 kB
+    Locked:                0 kB
+    VmFlags: rd wr mr mp me ac sd 
+    7f065caba000-7f065cc7c000 r-xp 00000000 08:03 74554                      /usr/lib64/libc-2.17.so
+    Size:               1800 kB
+    Rss:                 372 kB
+    Pss:                  20 kB
+    Shared_Clean:        372 kB
+    Shared_Dirty:          0 kB
+    Private_Clean:         0 kB
+    Private_Dirty:         0 kB
+    Referenced:          372 kB
+    Anonymous:             0 kB
+    AnonHugePages:         0 kB
+    Swap:                  0 kB
+    KernelPageSize:        4 kB
+    MMUPageSize:           4 kB
+    Locked:                0 kB
+    VmFlags: rd ex mr mp me sd 
+    ......
 
 ## 网络
 ### ss
