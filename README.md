@@ -19,6 +19,44 @@
     
 
 ## 网络
+### ss
+可以通过该工具查看网络连接的信息
+
+查看本地监听socket的信息，例如:
+
+    $ ss -ntupl
+    Netid  State      Recv-Q Send-Q          Local Address:Port           Peer Address:Port              
+    udp    UNCONN     0      0               *:68                         *:*                  
+    tcp    LISTEN     0      128             *:22                         *:*                  
+    tcp    LISTEN     0      128             *:7737                       *:*                   users:(("echo",pid=15870,fd=3))
+    tcp    LISTEN     0      80              :::3306                      :::*                  
+    tcp    LISTEN     0      128             :::22                        :::* 
+    
+    其中参数
+    -n 代表显示IP地址
+    -t 代表显示tcp连接
+    -u 代表显示udp连接
+    -p 显示使用该socket的进程
+    -l 显示监听socket
+    
+启动客户端，查看连接，例如:    
+   
+    $ ss -ntup
+    Netid  State      Recv-Q Send-Q        Local Address:Port           Peer Address:Port                   
+    tcp    ESTAB      370828 0             192.168.0.45:7737            192.168.0.115:42188        
+    
+    
+显示更多tcp连接细节，例如:
+    
+    $ ss -ntupi
+    Netid  State      Recv-Q Send-Q       Local Address:Port            Peer Address:Port              
+    tcp    ESTAB      0      0            192.168.0.45:7737             192.168.0.115:42188         users:(("echo",pid=15870,fd=5))
+         cubic wscale:7,7 rto:205 rtt:3/1.5 ato:40 mss:1448 rcvmss:1448 advmss:1448 cwnd:10 bytes_received:3008400 segs_out:1981 segs_in:40739 send 38.6Mbps lastsnd:4772 lastack:1677 pacing_rate 77.2Mbps rcv_rtt:5.75 rcv_space:29153                                       
+    其中参数
+    -i 代表显示更多tcp细节
+
+其他详细参数请参考[man ss]()
+
 ### netstat命令
 
 ## 系统
@@ -288,5 +326,7 @@ python实现的系统监测工具
     14-05 12:53:07|  0   0 100   0   0   0|   0     0 |  77    80 |1.00  1.00 |  60B  550B| 396M 2076k  435M 7172M|   0     0 
     14-05 12:53:08|  0   0 100   0   0   0|   0     0 |  50    56 |1.00  1.00 |  60B  550B| 396M 2076k  435M 7172M|   0     0 
     14-05 12:53:09|  0   0 100   0   0   0|   0     0 | 194   169 |31.0  1.00 |1860B  550B| 396M 2076k  435M 7172M|   0     0 
+
+其他详细参数请参考[man dstat]()
 
 ### free命令
