@@ -7,7 +7,8 @@
 - [进程](#进程)
 
 - [网络](#网络)
-  - [netstat命令](#netstat命令)
+  - [ss](#ss)
+  - [netstat](#netstat)
 - [系统](#系统)
   - [lsof](#lsof)
   - [dstat](#dstat)
@@ -57,11 +58,39 @@
 
 其他详细参数请参考[man ss]()
 
-### netstat命令
+### netstat
+可以通过该工具查看网络连接的情况
+  
+    # netstat -tnap
+    Active Internet connections (servers and established)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+    tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      3356/sshd           
+    tcp        0      0 0.0.0.0:7737            0.0.0.0:*               LISTEN      16078/./echo        
+    tcp6       0      0 :::3306                 :::*                    LISTEN      3526/mysqld         
+    tcp6       0      0 :::22                   :::*                    LISTEN      3356/sshd       
+
+    其中参数
+    -t 代表显示tcp连接
+    -n 代表显示ip而不进行解析
+    -a 代表显示处于监听和非监听的socket信息
+    -p 显示使用该socket的进程
+
+启动客户端
+    
+    # netstat -tnap
+    Active Internet connections (servers and established)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+    tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      3356/sshd           
+    tcp        0      0 0.0.0.0:7737            0.0.0.0:*               LISTEN      16078/./echo        
+    tcp     2680      0 192.168.0.45:7737       192.168.0.115:42190     ESTABLISHED 16078/./echo        
+    tcp6       0      0 :::3306                 :::*                    LISTEN      3526/mysqld         
+    tcp6       0      0 :::22                   :::*                    LISTEN      3356/sshd  
+    
+其他详细参数请参考[man netstat]()
 
 ## 系统
 ### lsof
-可以通过该命令查看进程的文件描述符，输出的结果如:
+可以通过该工具查看进程的文件描述符，输出的结果如:
 
     COMMAND   PID     USER        FD      TYPE     DEVICE      SIZE/OFF    NODE      NAME
     进程名字  进程ID   所属用户  文件描述符  文件类型   设备      文件大小    索引节点   文件名称
