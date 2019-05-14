@@ -5,7 +5,7 @@
 ## 内容
 
 - [进程](#进程)
-  - [lsof查看文件描述符](#lsof查看文件描述符)
+  - [lsof](#lsof)
 - [网络](#网络)
   - [netstat命令](#netstat命令)
 - [系统](#系统)
@@ -20,8 +20,38 @@
 ### netstat命令
 
 ## 系统
-### lsof查看文件描述符
-   
+### lsof
+
+#### 输出的结果
+    COMMAND   PID     USER        FD      TYPE     DEVICE      SIZE/OFF    NODE      NAME
+    进程名字  进程ID   所属用户  文件描述符  文件类型   设备      文件大小    索引节点   文件名称
+    
+其中 FD:
+
+     cwd 代表当前工作目录
+     rtd 代表根目录
+     txt 代表程序代码和数据
+     mem 代表内存映射的文件
+     NOFD 代表文件描述符无法打开
+     
+     数字+后缀 比如 0u,1u,2u,3u,4r,5w,6u等
+     后缀r代表该文件描述符进行读访问
+     后缀w代表该文件描述符进行写访问
+     后缀u代表该文件描述符进行读写访问
+其中 TYPE:
+      
+      REG     代表普通文件
+      DIR     代表目录
+      CHR     代表字符文件
+      IPV4    代表ipv4套接字
+      FIFO    代表FIFO文件
+      a_inode 代表系统特殊文件
+      
+
+其他详细参数请参考[man lsof]()
+     
+     
+    
 #### 查看指定用户的全部文件描述符信息
       
       lsof -u [USER]
@@ -62,7 +92,6 @@
 例子:
     
     $ lsof -i
-    进程名字  进程ID   所属用户  文件描述符  文件类型   设备      文件大小    索引节点   文件名称
     COMMAND   PID     USER     FD         TYPE       DEVICE   SIZE/OFF    NODE      NAME
     echo      10506   dan      3u         IPv4       46129    0t0         TCP       *:7737 (LISTEN)   
     
@@ -78,7 +107,6 @@
 
     $ ./echo 
     $ lsof -i tcp:7737
-    进程名字  进程ID   所属用户  文件描述符  文件类型   设备      文件大小    索引节点   文件名称
     COMMAND   PID     USER     FD         TYPE       DEVICE   SIZE/OFF    NODE      NAME
     echo      10506   dan      3u         IPv4       46129    0t0         TCP       *:7737 (LISTEN)
 
@@ -91,7 +119,6 @@
 例子:
 
     $ lsof -p 10506
-    进程名字  进程ID   所属用户  文件描述符  文件类型   设备      文件大小    索引节点   文件名称
     COMMAND   PID     USER     FD         TYPE       DEVICE   SIZE/OFF    NODE      NAME
     echo      10506   dan      cwd        DIR        8,3      35          103040265 /home/dan/work/37net/example/build/bin
     echo      10506   dan      rtd        DIR        8,3      224         64        /
