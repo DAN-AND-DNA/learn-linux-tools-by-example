@@ -5,6 +5,8 @@
 ## 内容
 
 - [进程](#进程)
+  - [valgrind](#valgrind)
+  - [KCachegrind](#KCachegrind)
   - [proc](#proc)
 - [网络](#网络)
   - [ss](#ss)
@@ -12,7 +14,7 @@
 - [系统](#系统)
   - [lsof](#lsof)
   - [dstat](#dstat)
-  - [free命令](#free命令)
+  - [free](#free)
 
 
 ## 进程
@@ -537,4 +539,4 @@ python实现的系统监测工具
 
 其他详细参数请参考[man dstat]()
 
-### free命令
+### free
