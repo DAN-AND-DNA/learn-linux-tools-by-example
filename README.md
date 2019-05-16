@@ -330,6 +330,9 @@
     41  percentage of events annotated
 
 ## KCachegrind
+
+本文使用的KCachegrind版本为https://github.com/KDE/kcachegrind
+
 如果Linux里有KDE可以用KCachegrind打开callgrind.out.* ，如果需要显示源代码，需要在Settings里Configure KCachegrind添加源代码位置，例如:
     
     Ir 代表指令数热点，也就是需要进行优化的参考位置。
@@ -872,5 +875,22 @@ python实现的系统监测工具
 其他详细参数请参考[man dstat]()
 
 ### free
+查看系统内存，例如:
 
+    输出结果中buffers 为写入磁盘的缓存的物理内存大小， cache 为读取磁盘的缓存的物理内存大小。
+    
+    $ free -h
+                  total        used        free      shared  buff/cache   available
+    Mem:           7.8G        323M        7.0G        8.5M        473M        7.2G
+    Swap:          2.0G          0B        2.0G
+  
+  
+    $ free -w 
+                 total        used        free      shared     buffers       cache   available
+    Mem:        8197056      332496     7379308        8728        2076      483176     7587984
+    Swap:       2097148           0     2097148
+    
+    其中系统还有多少内存，即真正可用的内存为 free + buff/cache 或者 free + buffers + cache
+    
+其他详细参数请参考[man dstat]()    
 ### sar
