@@ -36,7 +36,256 @@
     ==4137== 
     ==4137== I   refs:      296,028
 
-就会生成 callgrind.out.4137文件
+就会生成 callgrind.out.4137文件，可以用callgrind_annotate打开，其中左侧的Ir代表指令数，也是优化的热点参考位置，例如:
+    
+    $ callgrind_annotate callgrind.out.4137  /home/dan/work/37net/src/37EventLoop.c | grep -v "???"
+    --------------------------------------------------------------------------------
+    Profile data file 'callgrind.out.4137' (creator: callgrind-3.13.0)
+    --------------------------------------------------------------------------------
+    I1 cache: 
+    D1 cache: 
+    LL cache: 
+    Timerange: Basic block 0 - 48715
+    Trigger: Program termination
+    Profiled target:  ./echo (PID 4137, part 1)
+    Events recorded:  Ir
+    Events shown:     Ir
+    Event sort order: Ir
+    Thresholds:       99
+    Include dirs:     
+    User annotated:   /home/dan/work/37net/src/37EventLoop.c
+    Auto-annotation:  off
+
+    --------------------------------------------------------------------------------
+        Ir 
+    --------------------------------------------------------------------------------
+    296,028  PROGRAM TOTALS
+
+    --------------------------------------------------------------------------------
+     Ir  file:function
+    --------------------------------------------------------------------------------
+    120,092  /home/dan/work/37net/src/37EventLoop.c:CreateEventLoop [/home/dan/work/37net/example/build/bin/echo]
+        140  /home/dan/work/37net/src/37Socket.c:CreateServer [/home/dan/work/37net/example/build/bin/echo]
+
+    --------------------------------------------------------------------------------
+    -- User-annotated source: /home/dan/work/37net/src/37EventLoop.c
+    --------------------------------------------------------------------------------
+        Ir 
+
+    -- line 9 ----------------------------------------
+        .  typedef struct Epoll37 {
+        .      int                     m_iEfd;
+        .      struct epoll_event*     m_EpollEvents;
+        .  } Epoll37;
+        .  
+        .  int iDone = 0;
+        .  
+        .  inline EventLoop37* CreateEventLoop(int iSize)
+        4  {
+        1      EventLoop37* pstEventLoop = NULL;
+        10      if ((pstEventLoop = malloc(sizeof(EventLoop37))) == NULL)
+        .      {
+        .          goto ERROR;
+        .      }
+        .  
+        3      pstEventLoop->m_iSize = iSize;
+        9      pstEventLoop->m_pstEvents = malloc(sizeof(Event37) * (uint32_t)(iSize));
+        9      pstEventLoop->m_pstFiredEvents = malloc(sizeof(FiredEvent37) * (uint32_t)(iSize));
+        .  
+        8      if(pstEventLoop->m_pstEvents == NULL || pstEventLoop->m_pstFiredEvents == NULL)
+        .      {
+        .          goto ERROR;
+        .      }
+        .  
+        4      Epoll37* pstEpoll = malloc(sizeof(Epoll37));
+        2      if(pstEpoll == NULL)
+        .      {
+        .          goto ERROR;
+        .      }
+        .  
+        12      pstEpoll->m_EpollEvents = malloc(sizeof(struct epoll_event) * (uint32_t)(iSize));
+        4      if(pstEpoll->m_EpollEvents == NULL)
+        .      {
+        .          goto ERROR;
+        .      }
+        .  
+        9      pstEpoll->m_iEfd = epoll_create1(EPOLL_CLOEXEC);
+        4      if(pstEpoll->m_iEfd == -1)
+        .      {
+        .          goto ERROR;
+        .      }
+        .      
+        .      int i;
+    50,006      for(i = 0; i < pstEventLoop->m_iSize; i++)
+        .      {
+    70,000          pstEventLoop->m_pstEvents[i].m_iAction = 0;
+        .      }
+        .  
+        3      pstEventLoop->m_pstEpoll = pstEpoll;
+        2      return pstEventLoop;
+        .  
+        .  ERROR:
+        .      if(pstEpoll != NULL)
+        .      {
+        .          free(pstEpoll->m_EpollEvents);
+        .          free(pstEpoll);
+        .      }
+        .  
+    -- line 66 ----------------------------------------
+    -- line 68 ----------------------------------------
+        .      {
+        .          free(pstEventLoop->m_pstEvents);
+        .          free(pstEventLoop->m_pstFiredEvents);
+        .          free(pstEventLoop);
+        .      }
+        .  
+        .      return NULL;
+        .  
+        2  }
+        .  
+        .  inline int AddEvent(EventLoop37* pstEventLoop, int iFd, int iAction, Handle* pstHandle, void* pstUserData)
+        8  {
+        4      if(iFd > pstEventLoop->m_iSize)
+        .      {
+        .          return -1;
+        .      }
+        .  
+        7      Event37* e = &(pstEventLoop->m_pstEvents[iFd]);
+        3      Epoll37* ep = pstEventLoop->m_pstEpoll;
+        .      
+        .      struct epoll_event ee;
+        .     // bzero(&ee, sizeof(struct epoll_event));
+        .     // ee.events = 0;
+        .      
+        1      int op = EPOLL_CTL_ADD;
+        4      if(e->m_iAction != 0)
+        .      {
+        .          op = EPOLL_CTL_MOD;
+        .      }
+        .  
+        6      e->m_iAction |= iAction;
+        3      e->m_pstUserData = pstUserData;
+        .      
+        4      if(iAction & EPOLLIN)
+        .      {
+        3          e->m_pstHandleRead = pstHandle;
+        .      }
+        .  
+        4      if(iAction & EPOLLOUT)
+        .      {
+        .          e->m_pstHandleWrite = pstHandle;
+        .      }
+        3      ee.events = (uint32_t)(e->m_iAction);
+        2      ee.data.fd = iFd;
+        14      if(epoll_ctl(ep->m_iEfd, op, iFd, &ee) == -1) 
+        .      {
+        .          return -1;
+        .      }
+        .  
+        1      return 0;
+        2  }
+        .  
+        .  inline int DelEvent(EventLoop37* pstEventLoop, int iFd, int iAction)
+        .  {
+        .      if(iFd > pstEventLoop->m_iSize)
+        .      {
+        .          return -1;
+        .      }
+        .  
+    -- line 126 ----------------------------------------
+    -- line 152 ----------------------------------------
+        .          }
+        .  
+        .      }
+        .      return 0;
+        .  }
+        .  
+        .  
+        .  inline int Poll(EventLoop37* pstEventLoop)
+        4  {
+        3      Epoll37* ep = pstEventLoop->m_pstEpoll;
+        15      int fired = epoll_wait(ep->m_iEfd, ep->m_EpollEvents, pstEventLoop->m_iSize, 10000);
+        .  
+        .      int i;
+        5      for(i = 0; i < fired; i++)
+        .      {
+        .          struct epoll_event* e = ep->m_EpollEvents + i; 
+        .          if(e->events & (EPOLLIN | EPOLLPRI | EPOLLRDHUP))
+        .          {
+        .              pstEventLoop->m_pstFiredEvents[i].m_iFd  = e->data.fd;
+        .              pstEventLoop->m_pstFiredEvents[i].m_iAction = EPOLLIN;
+        .          }
+        .  
+        .          if(e->events & EPOLLOUT)
+        .          {    
+        .              pstEventLoop->m_pstFiredEvents[i].m_iFd  = e->data.fd;
+        .              pstEventLoop->m_pstFiredEvents[i].m_iAction = EPOLLOUT;
+        .          }
+        .      }
+        1      return fired;
+        2  }
+        .  
+        .  
+        .  inline int ProcessFired(EventLoop37* pstEventLoop)
+        4  {
+        4      int fired = Poll(pstEventLoop);
+       867  => /home/dan/work/37net/src/37EventLoop.c:Poll (1x)
+        .    
+        .      int i;
+        5      for(i = 0; i < fired; i++)
+        .      {
+        .          int fd = pstEventLoop->m_pstFiredEvents[i].m_iFd;
+        .          int iAction = pstEventLoop->m_pstFiredEvents[i].m_iAction;
+        .          Event37* e = &(pstEventLoop->m_pstEvents[fd]);
+        .          if(iAction & EPOLLIN)
+        .          {
+        .              e->m_pstHandleRead(pstEventLoop, fd, e->m_pstUserData, iAction);
+        .          }
+    -- line 197 ----------------------------------------
+    -- line 198 ----------------------------------------
+        .          if(iAction & EPOLLOUT)
+        .          {
+        .              e->m_pstHandleWrite(pstEventLoop, fd, e->m_pstUserData, iAction);
+        .          }
+        .  
+        .          iDone++;
+        .      }
+        .         
+        1      return iDone;
+        2  }
+        .  
+        .  
+        .  inline void Run(EventLoop37* pstEventLoop)
+        4  {
+        .     // while(!pstEventLoop->m_iStop)
+        .      {
+        3          ProcessFired(pstEventLoop);
+      883  => /home/dan/work/37net/src/37EventLoop.c:ProcessFired (1x)
+        .      }
+        2  }
+        .  
+        .  inline void Stop(EventLoop37* pstEventLoop)
+        .  {
+        .      Epoll37* ep = pstEventLoop->m_pstEpoll;
+        .      close(ep->m_iEfd);
+        .      free(ep->m_EpollEvents);
+        .      free(pstEventLoop->m_pstEpoll);
+        .      free(pstEventLoop->m_pstEvents);
+    -- line 224 ----------------------------------------
+
+    --------------------------------------------------------------------------------
+    Ir 
+    --------------------------------------------------------------------------------
+    41  percentage of events annotated
+
+## KCachegrind
+如果Linux里有KDE可以用KCachegrind打开callgrind.out.* ，如果需要显示源代码，需要在Settings里Configure KCachegrind添加源代码位置，例如:
+    
+    Ir 代表指令数热点，也就是需要进行优化的参考位置。
+    Ir per call 代表指令的数量
+![demo](https://github.com/DAN-AND-DNA/learn-linux-tools-by-example/blob/master/img/2019516-102102.jpg)
+
+
 
 ## proc
 可以通过该文件查看进程的内存信息
