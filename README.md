@@ -16,7 +16,6 @@
   - [lsof](#lsof)
   - [dstat](#dstat)
   - [free](#free)
-  - [sar](#sar)
 
 
 ## 进程
@@ -892,5 +891,4 @@ python实现的系统监测工具
     
     其中系统还有多少内存，即真正可用的内存为 free + buff/cache 或者 free + buffers + cache
     
-其他详细参数请参考[man dstat]()    
-### sar
+其他详细参数请参考[man free]()    
