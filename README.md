@@ -36,7 +36,7 @@
     ==4137== 
     ==4137== I   refs:      296,028
 
-就会生成 callgrind.out.4137文件，可以用callgrind_annotate打开，其中左侧的Ir代表指令数，也是优化的热点参考位置，例如:
+就会生成 callgrind.out.4137文件，可以用callgrind_annotate打开，其中左侧的Ir代表指令数，约大的值越是优化的热点参考位置，例如:
     
     $ callgrind_annotate callgrind.out.4137  /home/dan/work/37net/src/37EventLoop.c | grep -v "???"
     --------------------------------------------------------------------------------
