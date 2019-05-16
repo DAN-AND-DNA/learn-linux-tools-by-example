@@ -18,6 +18,26 @@
 
 
 ## 进程
+## valgrind
+利用valgrind进行函数调用剖析，例如:
+      
+    $ valgrind --tool=callgrind ./echo
+    ==4137== Callgrind, a call-graph generating cache profiler
+    ==4137== Copyright (C) 2002-2017, and GNU GPL'd, by Josef Weidendorfer et al.
+    ==4137== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+    ==4137== Command: ./echo
+    ==4137== 
+    ==4137== For interactive control, run 'callgrind_control -h'.
+    pagesize:4096
+    count :0
+    ==4137== 
+    ==4137== Events    : Ir
+    ==4137== Collected : 296028
+    ==4137== 
+    ==4137== I   refs:      296,028
+
+就会生成 callgrind.out.4137文件
+
 ## proc
 可以通过该文件查看进程的内存信息
 
